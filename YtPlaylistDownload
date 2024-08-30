@@ -1,0 +1,28 @@
+from pytube import Playlist
+from pytube import YouTube
+import os
+
+def get_playlist():
+    playlist_url = input("Masukkan URL playlist: ")
+    playlist = Playlist(playlist_url)
+    print(f"\nNama Playlist: {playlist.title}")
+    print(f"Jumlah Video: {len(playlist.videos)}\n")
+    print("Daftar Video:")
+    for i, video in enumerate(playlist.videos):
+        print(f"{i+1}. {video.title}")
+    return list(playlist.video_urls)
+
+
+def download_mp3(video_urls):
+    for url in video_urls:
+        yt = YouTube(url)
+        audio_stream = yt.streams.filter(only_audio=True).first()
+        audio_file = audio_stream.download()
+        base, ext = os.path.splitext(audio_file)
+        new_file = base + '.mp3'
+        os.rename(audio_file, new_file)
+        print(f"Audio telah diunduh dan disimpan sebagai {new_file}")
+
+def main():
+    download_mp3(get_playlist())
+main()
